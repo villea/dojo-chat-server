@@ -1,0 +1,9 @@
+{
+    "name": "solita-dojo-chat-server"
+  , "version": "0.0.1"
+  , "private": true
+  , "dependencies": {
+     "socket.io" : "0.9.10",
+     "underscore" : "1.5.2"
+  }
+}
