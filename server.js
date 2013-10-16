@@ -1,57 +1,55 @@
 var io = require("socket.io").listen(80),
-     _ = require("underscore");
+     _ = require("underscore"),
+     chat = require("./chatManager")
 
 
-var messages = [];
-
-var rooms = ["music","videos","pics","coding"];
-
-var users = [];
-
-
+ var userRooms = function (id){
+    var rooms = io.sockets.manager.roomClients[id];
+  	return chat.getUserRooms(rooms);
+ }
 
 io.sockets.on('connection', function (socket) {
-  
-  var userRooms = function (id){
-    var rooms = io.sockets.manager.roomClients[id];
-  	return _.chain(rooms).
-  	         keys().
-  	         filter(function (room){
-                return room != "";
-  	         }).
-  	         map(function (room) {
-                return room.slice(1);
-  	         }).value();
-  }
 
-  socket.on("login", function (user){
+  socket.on("login", function (user,errHandler){
   
+  try {
+  chat.login(socket.id,user);
+  } catch (exception){
+  	 return errHandler(exception.message);
+  }
   socket.set("user",user, function (){
-     users.push({id: socket.id,
-  	          user : user});
-     console.log(users);
-     socket.emit("updateUsers",users);
-     socket.emit("updateRooms",rooms);
+     socket.emit("updateRooms",chat.rooms);
   });
 
 
   socket.on("sendMessage", function (data,errHandler) {
        socket.get("user",function (err,user){
-         var room = data.room;
-         if (!_.contains(userRooms(socket.id),room)){
-             return errHandler("not_in_room");
-         }
-         data.date = new Date();
-         data.sender = user;
-         messages.push(data);
-         io.sockets.in(room).emit("updateMessages",data);
-         console.log(messages);
+         try {
+         var message = chat.sendMessage(userRooms(socket.id),data);
+         io.sockets.in(message.room).emit("updateMessages",message);
+         console.log(chat.messages);
+         } catch (exception){
+         	return errHandler(exception.message);
+         }      
       });
   });
 
-  socket.on("join",function (room){
+  socket.on("join",function (room,errHandler){
+  	try {
+  	if (chat.isNewRoom(room)){
+  		chat.rooms.push(room);
+  		io.sockets.emit("updateRooms",chat.rooms);
+  	}
+  	chat.join(room,socket.id);	
   	socket.join(room);
-  	console.log(userRooms(socket.id));
+  	socket.emit("updateUserRooms",userRooms(socket.id));
+  	io.sockets.in(room).emit("updateUsersInRoom",{
+  		room : room,
+  		users : chat.roomsAndUsers[room]
+  	});
+    } catch (exception){
+    	return errHandler(exception.message);
+    }
   })
 
   });
