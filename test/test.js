@@ -1,5 +1,6 @@
 var assert = require("assert"),
-    chatManager = require("../chatManager")
+    chatManager = require("../chatManager"),
+    _ = require("underscore");
 
 var rightMessage = function (message){
 	return function (err){
@@ -65,8 +66,30 @@ describe("chatManager", function (){
   	})
   })
 
-  describe("#sendMessage", function (){
+  describe("#disconnect", function (){
+      
+    it("should remove user from chatManager.user object", function (){
+      chatManager.login("1","user");
+      chatManager.disconnect("1");
+      assert.equal(0,_.keys(chatManager.users).length);
+    })
+
+    it("should remove user from chatManager.roomsAndUsers", function (){
+      chatManager.login("1","user");
+      chatManager.login("2","user2");
+      chatManager.join("music","1");
+      chatManager.join("music","2");
+      chatManager.join("kettula","1");
+      chatManager.join("kettula","2");
+      
+      chatManager.disconnect("1");
+    
+
+      assert.equal("2",chatManager.roomsAndUsers["music"][0])
+      assert.equal("2",chatManager.roomsAndUsers["kettula"][0])
+    })
 
   })
+
 
 })

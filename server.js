@@ -18,7 +18,7 @@ io.sockets.on('connection', function (socket) {
   	 return errHandler(exception.message);
   }
   socket.set("user",user, function (){
-     socket.emit("updateRooms",chat.rooms);
+     socket.emit("updateRooms",chat.getRooms());
   });
 
 
@@ -36,12 +36,12 @@ io.sockets.on('connection', function (socket) {
 
   socket.on("join",function (room,errHandler){
   	try {
-  	if (chat.isNewRoom(room)){
-  		chat.rooms.push(room);
-  		io.sockets.emit("updateRooms",chat.rooms);
-  	}
+
   	chat.join(room,socket.id);	
   	socket.join(room);
+    if (chat.isNewRoom(room)){
+      io.sockets.emit("updateRooms",chat.getRooms());
+    }
   	socket.emit("updateUserRooms",userRooms(socket.id));
   	io.sockets.in(room).emit("updateUsersInRoom",{
   		room : room,
@@ -50,6 +50,11 @@ io.sockets.on('connection', function (socket) {
     } catch (exception){
     	return errHandler(exception.message);
     }
+  })
+
+  socket.on("disconnect", function (){
+    chat.disconnect(socket.id);
+    console.log(chat.roomsAndUsers);
   })
 
   });

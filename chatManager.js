@@ -1,12 +1,14 @@
 _ = require("underscore");
 
-exports.rooms = [];
-
 exports.users = {};
 
 exports.roomsAndUsers = {}
 
 exports.messages = [];
+
+exports.getRooms = function (){
+  return _.keys(exports.roomsAndUsers) || [];
+}
 
 exports.getUserRooms = function (rooms){
   	return _.chain(rooms).
@@ -35,6 +37,8 @@ exports.login = function (id,name){
 
 exports.UserAlreadyInRoomException = { message : "USER_ALREADY_IN_ROOM"}
 
+exports.UserNotInRoomException = {message :"USER_NOT_IN_ROOM"};
+
 exports.isNewRoom = function(room){
 	return !_.contains(exports.room,room);
 }
@@ -50,7 +54,6 @@ exports.join = function (room,socketId){
   	}
 }
 
-exports.UserNotInRoomException = {message :"USER_NOT_IN_ROOM"};
 
 exports.sendMessage = function (userRooms,message){
     if (!_.contains(userRooms,message.room)){
@@ -65,4 +68,12 @@ exports.sendMessage = function (userRooms,message){
     return message;
 }
 
+exports.disconnect = function (id){
+  delete exports.users[id];
+  _.each(exports.getRooms(), function (room){
+     exports.roomsAndUsers[room] = _.filter(exports.roomsAndUsers[room], function (userId){
+        return userId !== id;
+     });
+  })
+}
 
