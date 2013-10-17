@@ -55,15 +55,16 @@ exports.join = function (room,socketId){
 }
 
 
-exports.sendMessage = function (userRooms,message){
+exports.sendMessage = function (userRooms,user,message){
     if (!_.contains(userRooms,message.room)){
          throw exports.UserNotInRoomException;
     }
     var message = {
+      sender : user,
     	timestamp : new Date().getTime(),
     	room : message.room,
     	message : message.message
-        };
+    };
     exports.messages.push(message);
     return message;
 }

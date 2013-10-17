@@ -25,7 +25,7 @@ io.sockets.on('connection', function (socket) {
   socket.on("sendMessage", function (data,errHandler) {
        socket.get("user",function (err,user){
          try {
-         var message = chat.sendMessage(userRooms(socket.id),data);
+         var message = chat.sendMessage(userRooms(socket.id),user,data);
          io.sockets.in(message.room).emit("receiveMessage",message);
          console.log(chat.messages);
          } catch (exception){

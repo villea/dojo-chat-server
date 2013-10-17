@@ -13,6 +13,7 @@ describe("chatManager", function (){
   beforeEach(function (){
   	 chatManager.users = {};
   	 chatManager.roomsAndUsers = {};
+     chatManager.messages = [];
   })
 
   describe("#getUserRooms",function (){
@@ -87,6 +88,25 @@ describe("chatManager", function (){
 
       assert.equal("2",chatManager.roomsAndUsers["music"][0])
       assert.equal("2",chatManager.roomsAndUsers["kettula"][0])
+    })
+
+  })
+
+  describe("#sendMessage", function (){
+
+    it("should add message to chat.messages", function (){
+      chatManager.login("1","user");
+      chatManager.join("music","1");
+      var message = { room : "music", message : "heppa"}
+      chatManager.sendMessage(["music"],"user",message);
+      assert.equal(1,chatManager.messages.length);
+    })
+
+    it("should throw USER_NOT_IN_ROOM if user is not in room", function (){
+      var message = { room : "music", message : "heppa"}
+      assert.throws(function (){
+      chatManager.sendMessage(["kissala"],"user",message);
+      }, rightMessage("USER_NOT_IN_ROOM"));
     })
 
   })
