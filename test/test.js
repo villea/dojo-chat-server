@@ -49,15 +49,12 @@ describe("chatManager", function (){
 
   describe("#join", function (){
 
-  	it("should add user id to the room",function (){
+  	it("should add user id to the chatManager.roomAndUsers",function (){
   		chatManager.login("1","user");
   		chatManager.join("music","1");
   		assert.equal("1",chatManager.roomsAndUsers["music"][0])
   	})
 
-  	it("should create new room if room doesn't exist", function (){
-
-  	})
 
   	it("should throw USER_ALREADY_IN_ROOM if user is already in room",function (){
   		assert.throws(function (){
