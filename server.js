@@ -34,7 +34,7 @@ io.sockets.on('connection', function (socket) {
       });
   });
 
-  socket.on("join",function (room,errHandler){
+  socket.on("joinRoom",function (room,errHandler){
   	try {
 
   	chat.join(room,socket.id);	
@@ -42,6 +42,20 @@ io.sockets.on('connection', function (socket) {
     if (chat.isNewRoom(room)){
       io.sockets.emit("updateAllRooms",chat.getRooms());
     }
+  	socket.emit("updateJoinedRooms",userRooms(socket.id));
+  	io.sockets.in(room).emit("updateUsersInRoom",{
+  		room : room,
+  		users : chat.roomsAndUsers[room]
+  	});
+    } catch (exception){
+    	return errHandler(exception.message);
+    }
+  });
+
+  socket.on("leaveRoom", function (room,errHandler){
+    try {
+    chat.leave(room,socket.id);
+    socket.leave(room);
   	socket.emit("updateJoinedRooms",userRooms(socket.id));
   	io.sockets.in(room).emit("updateUsersInRoom",{
   		room : room,

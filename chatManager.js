@@ -54,6 +54,12 @@ exports.join = function (room,socketId){
   	}
 }
 
+exports.leave = function (room,socketId){
+  var users = _.filter(exports.roomsAndUsers[room],function (userId){
+      return socketId !== userId;
+  });
+  exports.roomsAndUsers[room] = users;
+};
 
 exports.sendMessage = function (userRooms,user,message){
     if (!_.contains(userRooms,message.room)){

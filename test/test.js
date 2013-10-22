@@ -111,5 +111,34 @@ describe("chatManager", function (){
 
   })
 
+  describe("#leave", function (){
+    it("should remove user from desired room from chat.roomsAndUsers", function (){
+      chatManager.login("1","user");
+      chatManager.join("music","1");
+      chatManager.login("2","user2");
+      chatManager.join("music","2");
+      assert.equal(2,chatManager.roomsAndUsers["music"].length);
+      chatManager.leave("music","1");
+      assert.equal(1,chatManager.roomsAndUsers["music"].length);
+      assert.equal("2",chatManager.roomsAndUsers["music"][0]);
+    })
+    it("should not remove user from any other room from chat.roomsAndUsers", function (){
+      chatManager.login("1","user");
+      chatManager.login("2","user2");
+
+      chatManager.join("music","1");
+      chatManager.join("music","2");
+      chatManager.join("715517","1");
+      chatManager.join("715517","2");
+      chatManager.join("foobar","1");
+      chatManager.join("foobar","2");
+
+      chatManager.leave("715517","1");
+      assert.equal(2,chatManager.roomsAndUsers["music"].length);
+      assert.equal(1,chatManager.roomsAndUsers["715517"].length);
+      assert.equal(2,chatManager.roomsAndUsers["foobar"].length);
+    })
+
+  })
 
 })
