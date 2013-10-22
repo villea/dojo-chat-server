@@ -25,6 +25,25 @@ describe("chatManager", function (){
   	 	assert.equal("music",userRooms[0]);
   	 })
   })
+
+  describe("#getUsersInRoom", function (){
+    it("should return the users names in the room", function(){
+      chatManager.login("1","user");
+      chatManager.join("music","1");
+      chatManager.login("2","user2");
+      chatManager.join("music","2");
+      chatManager.login("3","user3");
+      chatManager.join("music","3");
+
+      var users = chatManager.getUsersInRoom("music");
+
+      assert.equal(3, users.length);
+      assert.equal(true, _.contains(users,"user"));
+      assert.equal(true, _.contains(users,"user2"));
+      assert.equal(true, _.contains(users,"user3"));
+    })
+
+  })
 	
   describe("#login", function (){
   	it("should return username", function (){
@@ -37,13 +56,13 @@ describe("chatManager", function (){
     it("should throw USER_ALREADY_LOGGED if called multiple times", function (){
     	assert.throws( function (){
     		chatManager.login("1","user");
-    	    chatManager.login("1","user");
+    	  chatManager.login("1","user");
     	},rightMessage("USER_ALREADY_LOGGED"));
     })
     it("should throw USERNAME_TAKEN if name is taken", function (){
     	assert.throws( function (){
     		chatManager.login("1","user");
-    	    chatManager.login("2","user");
+    	  chatManager.login("2","user");
     	}, rightMessage("USERNAME_TAKEN"));
     })
 

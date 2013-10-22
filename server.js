@@ -45,7 +45,7 @@ io.sockets.on('connection', function (socket) {
   	socket.emit("updateJoinedRooms",userRooms(socket.id));
   	io.sockets.in(room).emit("updateUsersInRoom",{
   		room : room,
-  		users : chat.roomsAndUsers[room]
+  		users : chat.getUsersInRoom(room)
   	});
     } catch (exception){
     	return errHandler(exception.message);
@@ -59,7 +59,7 @@ io.sockets.on('connection', function (socket) {
   	socket.emit("updateJoinedRooms",userRooms(socket.id));
   	io.sockets.in(room).emit("updateUsersInRoom",{
   		room : room,
-  		users : chat.roomsAndUsers[room]
+  		users : chat.getUsersInRoom(room)
   	});
     } catch (exception){
     	return errHandler(exception.message);

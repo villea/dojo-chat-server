@@ -21,6 +21,12 @@ exports.getUserRooms = function (rooms){
   	         }).value();
 }
 
+exports.getUsersInRoom = function (room){
+   return _.map(exports.roomsAndUsers[room], function (userId){
+          return exports.users[userId];
+   });
+}
+
 exports.UserAlreadyLoggedException = { message : "USER_ALREADY_LOGGED"};
 exports.UsernameTakenException = { message : "USERNAME_TAKEN"};
 
