@@ -66,12 +66,15 @@ io.sockets.on('connection', function (socket) {
     }
   })
 
-  socket.on("getAllRooms", function (handler){
-  	handler(chat.getRooms());
+  socket.on("getAllRooms", function (){
+  	socket.emit("updateAllRooms",chat.getRooms());
   });
 
-  socket.on("getUsersInRoom", function (room,handler){
-  	handler(chat.getUsersInRoom(room));
+  socket.on("getUsersInRoom", function (room){
+  	socket.emit("updateUsersInRoom",{
+      room : room,
+      users : chat.getUsersInRoom(room)
+    });
   });
    
 
