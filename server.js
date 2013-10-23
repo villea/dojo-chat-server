@@ -2,6 +2,10 @@ var io = require("socket.io").listen(80),
      _ = require("underscore"),
      chat = require("./chatManager")
 
+//Yeah, it's bad ..
+process.on('uncaughtException', function (err) {
+  console.log(err);
+})
 
  var userRooms = function (id){
     var rooms = io.sockets.manager.roomClients[id];
