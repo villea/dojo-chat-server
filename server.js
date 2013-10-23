@@ -66,10 +66,19 @@ io.sockets.on('connection', function (socket) {
     }
   })
 
+  socket.on("getAllRooms", function (handler){
+  	handler(chat.getRooms());
+  });
+
+  socket.on("getUsersInRoom", function (room,handler){
+  	handler(chat.getUsersInRoom(room));
+  });
+   
+
   socket.on("disconnect", function (){
     chat.disconnect(socket.id);
     console.log(chat.roomsAndUsers);
-  })
+  });
 
   });
 });
